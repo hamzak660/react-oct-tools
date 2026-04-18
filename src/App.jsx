@@ -8,7 +8,7 @@ import FileCompression from "./components/FileCompression";
 import ColorManager from "./components/ColorManager";
 import Notes from "./components/Notes";
 import Planner from "./components/Planner";
-import MindMap from "./components/MindMap";
+import MindMap from "./components/Mindmap";
 import LinkManager from "./components/LinkManager";
 import Flowchart from "./components/Flowchart";
 import Audioeditor from "./components/AudioEditor";
