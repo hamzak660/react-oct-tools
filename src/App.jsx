@@ -26,7 +26,7 @@ function App() {
         <main className="flex-1 relative overflow-hidden flex flex-col items-center justify-center">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#ffffff_1px,transparent_1px)] bg-[size:30px_30px]" />
 
-          <div className="relative w-full h-full p-6 overflow-auto">
+          <div className="relative w-full h-full overflow-auto">
             {!activeTool && <DefaultView />}
             {activeTool === "ai" && <AI setActiveTool={setActiveTool} />}
               {activeTool === "compress" && <FileCompression setActiveTool={setActiveTool} />}
