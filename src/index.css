@@ -69,5 +69,5 @@ body {
   height: 6px;
 }
 .h-3{
-    height: 3rem ;
+    height: 3rem !important;
 }
