@@ -68,6 +68,4 @@ body {
 .wave-container:hover ::part(scroll)::-webkit-scrollbar {
   height: 6px;
 }
-.h-3{
-    height: 3rem !important;
-}
+
