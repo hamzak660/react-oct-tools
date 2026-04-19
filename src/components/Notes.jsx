@@ -1,233 +1,158 @@
-import { useState, useEffect, useRef } from "react";
-import {
-  Plus,
-  Settings,
-  Trash2,
-  FileText,
-  GripVertical,
-  Bold,
-  Italic,
-  Underline,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, FileText, Trash2 } from "lucide-react";
 
-export default function Notes() {
+export default function NotesApp() {
   const [pages, setPages] = useState(() => {
-    const saved = localStorage.getItem("notion_pages");
-    return (
-      JSON.parse(saved) || [
-        {
-          id: 1,
-          title: "Getting Started",
-          content: [
-            "Welcome to your workspace.",
-            "Highlight text to see formatting options.",
-          ],
-        },
-      ]
-    );
+    const saved = localStorage.getItem("notes_app");
+    return saved
+      ? JSON.parse(saved)
+      : [
+          {
+            id: Date.now(),
+            title: "Untitled Note",
+            blocks: [""],
+          },
+        ];
   });
 
-  const [currentPageId, setCurrentPageId] = useState(pages[0].id);
-  const [toast, setToast] = useState("");
-  const toolbarRef = useRef(null);
+  const [activeId, setActiveId] = useState(pages[0].id);
 
-  const currentPage = pages.find((p) => p.id === currentPageId);
+  const activePage = pages.find((p) => p.id === activeId);
 
-  // SAVE TO LOCALSTORAGE
+  // SAVE
   useEffect(() => {
-    localStorage.setItem("notion_pages", JSON.stringify(pages));
+    localStorage.setItem("notes_app", JSON.stringify(pages));
   }, [pages]);
 
-  // FLOATING TOOLBAR
-  useEffect(() => {
-    const handleSelection = () => {
-      const selection = window.getSelection();
-      if (!selection || selection.toString().length === 0) {
-        toolbarRef.current.style.display = "none";
-        return;
-      }
-
-      const rect = selection.getRangeAt(0).getBoundingClientRect();
-      const toolbar = toolbarRef.current;
-
-      toolbar.style.display = "flex";
-      toolbar.style.top = `${rect.top + window.scrollY - 50}px`;
-      toolbar.style.left = `${rect.left + rect.width / 2}px`;
-    };
-
-    document.addEventListener("selectionchange", handleSelection);
-    return () =>
-      document.removeEventListener("selectionchange", handleSelection);
-  }, []);
-
+  // UPDATE PAGE
   const updatePage = (updated) => {
     setPages((prev) =>
-      prev.map((p) => (p.id === currentPageId ? updated : p))
+      prev.map((p) => (p.id === activeId ? updated : p))
     );
   };
 
-  const handleTitleChange = (e) => {
-    updatePage({ ...currentPage, title: e.target.value });
+  // TITLE
+  const updateTitle = (val) => {
+    updatePage({ ...activePage, title: val });
   };
 
-  const handleBlockChange = (i, html) => {
-    const updated = [...currentPage.content];
-    updated[i] = html;
-    updatePage({ ...currentPage, content: updated });
+  // BLOCK UPDATE
+  const updateBlock = (index, value) => {
+    const blocks = [...activePage.blocks];
+    blocks[index] = value;
+    updatePage({ ...activePage, blocks });
   };
 
-  const addBlock = () => {
+  // ADD BLOCK
+  const addBlock = (index) => {
+    const blocks = [...activePage.blocks];
+    blocks.splice(index + 1, 0, "");
+    updatePage({ ...activePage, blocks });
+  };
+
+  // DELETE BLOCK
+  const deleteBlock = (index) => {
+    const blocks = activePage.blocks.filter((_, i) => i !== index);
     updatePage({
-      ...currentPage,
-      content: [...currentPage.content, ""],
+      ...activePage,
+      blocks: blocks.length ? blocks : [""],
     });
   };
 
-  const deleteBlock = (i) => {
-    const updated = currentPage.content.filter((_, idx) => idx !== i);
-    updatePage({ ...currentPage, content: updated });
-  };
-
+  // NEW PAGE
   const addPage = () => {
     const newPage = {
       id: Date.now(),
-      title: "",
-      content: [""],
+      title: "Untitled Note",
+      blocks: [""],
     };
     setPages([...pages, newPage]);
-    setCurrentPageId(newPage.id);
-    showToast("New page created");
-  };
-
-  const resetApp = () => {
-    if (!confirm("Reset everything?")) return;
-    localStorage.removeItem("notion_pages");
-    window.location.reload();
-  };
-
-  const showToast = (msg) => {
-    setToast(msg);
-    setTimeout(() => setToast(""), 2000);
-  };
-
-  const format = (cmd) => {
-    document.execCommand(cmd, false, null);
+    setActiveId(newPage.id);
   };
 
   return (
-    <div className="flex h-full">
+    <div className="h-screen flex bg-[#0f0f0f] text-gray-200 font-sans">
 
-      {/* Toolbar */}
-      <div
-        ref={toolbarRef}
-        className="fixed hidden bg-[#202020] border border-gray-700 rounded-lg p-1 gap-1 z-50"
-      >
-        <button onClick={() => format("bold")}>
-          <Bold className="w-4 h-4 text-white" />
-        </button>
-        <button onClick={() => format("italic")}>
-          <Italic className="w-4 h-4 text-white" />
-        </button>
-        <button onClick={() => format("underline")}>
-          <Underline className="w-4 h-4 text-white" />
-        </button>
-      </div>
+      {/* SIDEBAR */}
+      <aside className="w-64 border-r border-gray-800 flex flex-col">
+        <div className="p-3 text-xs text-gray-500 uppercase">
+          Notes
+        </div>
 
-      {/* Sidebar */}
-      <aside className="w-60 bg-[#202020] text-white flex flex-col">
-        <div className="flex-1 overflow-y-auto p-2">
-          <div className="text-xs text-gray-400 px-3 mb-2">Private</div>
-
+        <div className="flex-1 overflow-auto">
           {pages.map((p) => (
             <div
               key={p.id}
-              onClick={() => setCurrentPageId(p.id)}
-              className={`flex items-center gap-2 px-3 py-2 cursor-pointer rounded ${
-                p.id === currentPageId ? "bg-gray-700" : "hover:bg-gray-800"
+              onClick={() => setActiveId(p.id)}
+              className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-[#1a1a1a] ${
+                p.id === activeId ? "bg-[#1a1a1a]" : ""
               }`}
             >
-              <FileText className="w-4 h-4" />
-              <span className="truncate">
-                {p.title || "Untitled"}
+              <FileText size={14} />
+              <span className="truncate text-sm">
+                {p.title}
               </span>
             </div>
           ))}
-
-          <button
-            onClick={addPage}
-            className="flex items-center gap-2 px-3 py-2 text-gray-400 hover:text-white"
-          >
-            <Plus className="w-4 h-4" /> Add page
-          </button>
         </div>
 
-        <div className="border-t border-gray-700 p-2">
-          <div className="flex items-center gap-2 px-3 py-2 hover:bg-gray-800 cursor-pointer">
-            <Settings className="w-4 h-4" />
-            Settings
-          </div>
-
-          <div
-            onClick={resetApp}
-            className="flex items-center gap-2 px-3 py-2 text-red-400 hover:bg-gray-800 cursor-pointer"
-          >
-            <Trash2 className="w-4 h-4" />
-            Reset
-          </div>
-        </div>
+        <button
+          onClick={addPage}
+          className="flex items-center gap-2 p-3 border-t border-gray-800 hover:bg-[#1a1a1a]"
+        >
+          <Plus size={16} /> New Note
+        </button>
       </aside>
 
-      {/* Editor */}
-      <main className="flex-1 overflow-y-auto p-10 flex justify-center">
+      {/* EDITOR */}
+      <main className="flex-1 flex justify-center p-10 overflow-auto">
         <div className="w-full max-w-3xl">
 
-          {/* Title */}
+          {/* TITLE */}
           <input
-            value={currentPage.title}
-            onChange={handleTitleChange}
+            value={activePage.title}
+            onChange={(e) => updateTitle(e.target.value)}
+            className="w-full text-3xl font-semibold bg-transparent outline-none mb-6"
             placeholder="Untitled"
-            className="text-4xl font-bold bg-transparent outline-none w-full mb-6"
           />
 
-          {/* Blocks */}
-          <div className="flex flex-col gap-2">
-            {currentPage.content.map((block, i) => (
+          {/* TEXT BLOCKS */}
+          <div className="space-y-2">
+            {activePage.blocks.map((text, i) => (
               <div key={i} className="flex gap-2 group">
-                <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 cursor-grab" />
 
-                <div
-                  contentEditable
-                  suppressContentEditableWarning
-                  className="flex-1 outline-none"
-                  onInput={(e) =>
-                    handleBlockChange(i, e.currentTarget.innerHTML)
+                <span className="text-gray-600 select-none">
+                  •
+                </span>
+
+                <input
+                  value={text}
+                  onChange={(e) =>
+                    updateBlock(i, e.target.value)
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
-                      addBlock();
+                      addBlock(i);
                     }
+
                     if (
                       e.key === "Backspace" &&
-                      e.currentTarget.innerHTML === ""
+                      text === ""
                     ) {
+                      e.preventDefault();
                       deleteBlock(i);
                     }
                   }}
-                  dangerouslySetInnerHTML={{ __html: block }}
+                  className="flex-1 bg-transparent outline-none text-gray-200"
+                  placeholder="Write something..."
                 />
               </div>
             ))}
           </div>
+
         </div>
       </main>
-
-      {/* Toast */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 bg-blue-600 px-4 py-2 rounded">
-          {toast}
-        </div>
-      )}
     </div>
   );
 }

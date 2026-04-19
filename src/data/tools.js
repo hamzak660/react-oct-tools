@@ -9,7 +9,7 @@ export const tools = [
   { id: "compress",  label: "File Compression",icon: Archive },
   { id: "notes",     label: "Notes",           icon: FileText },
   { id: "shortener", label: "Link Shortener",  icon: Link },
-  { id: "ai",        label: "AI",              icon: Sparkles },
+  { id: "ai",        label: "AI Chat",              icon: Sparkles },
   { id: "canvas",    label: "Canvas",          icon: Layout },
   { id: "planner",   label: "Planner",         icon: Calendar },
   { id: "flow",      label: "Flowchart",       icon: GitBranch },
@@ -17,5 +17,10 @@ export const tools = [
   { id: "video",     label: "Video Editor",    icon: Video },
   { id: "audio",     label: "Audio Editor",    icon: Mic },
   { id: "photo",     label: "Photo Editor",    icon: Image },
+  { id: "aisumm",       label: "Document Summarizer",      icon: Clapperboard },
   { id: "gif",       label: "Gif Editor",      icon: Clapperboard },
+  /*{ id: "imggen",       label: "Image Generation",      icon: Clapperboard },
+  { id: "audiogen",       label: "Text to Audio Generation",      icon: Clapperboard },
+  { id: "ainoise",       label: "AI Noise Remover",      icon: Clapperboard },
+*/
 ];

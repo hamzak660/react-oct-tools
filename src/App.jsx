@@ -4,15 +4,23 @@ import Sidebar from "./components/Sidebar";
 import TopNavbar from "./components/TopNavbar";
 import DefaultView from "./components/DefaultView";
 import AI from "./components/AI";
+import CanvasEditor  from "./components/Canvas";
 import FileCompression from "./components/FileCompression";
 import ColorManager from "./components/ColorManager";
 import Notes from "./components/Notes";
 import Planner from "./components/Planner";
+import Photoeditor from "./components/PhotoEditor";
 import MindMap from "./components/Mindmap";
 import LinkManager from "./components/LinkManager";
 import Flowchart from "./components/Flowchart";
 import Audioeditor from "./components/AudioEditor";
 import Videoeditor from "./components/VideoEditor";
+import Aisummarizer from "./components/AiSummarizer";
+/*import Imggen from "./components/ImgGen";
+import Audiogen from "./components/AudioGen";
+import AiNoiseremover from "./components/AiNoiseRemover";*/
+import Gifeditor from "./components/GifEditor";
+
 function App() {
   const [activeTool, setActiveTool] = useState(null);
 
@@ -32,12 +40,19 @@ function App() {
               {activeTool === "compress" && <FileCompression setActiveTool={setActiveTool} />}
                 {activeTool === "color" && <ColorManager />}
                 {activeTool === "notes" && <Notes />}
+                {activeTool === "gif" && <Gifeditor />}
+                {activeTool === "canvas" && <CanvasEditor  />}
                 {activeTool === "planner" && <Planner />}
+                {activeTool === "photo" && <Photoeditor />}
                 {activeTool === "mindmap" && <MindMap />}
                 {activeTool === "shortener" && <LinkManager />}
                 {activeTool === "flow" && <Flowchart />}
                 {activeTool === "audio" && <Audioeditor />}
                 {activeTool === "video" && <Videoeditor />}
+                {activeTool === "aisumm" && <Aisummarizer />}
+              {/*  {activeTool === "imggen" && <Imggen />}
+                {activeTool === "audiogen" && <Audiogen />}
+                {activeTool === "ainoise" && <AiNoiseremover />}*/}
           </div>
         </main>
       </div>

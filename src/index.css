@@ -69,3 +69,7 @@ body {
   height: 6px;
 }
 
+.fix-side-flow{
+  position: relative;
+    width: 65px;
+}

@@ -99,7 +99,7 @@ export default function Flowchart() {
       />
 
       {/* ===== SIDEBAR (EXACT SAME STYLE) ===== */}
-      <div className="fixed left-6 top-6 bottom-6 flex flex-col gap-4 z-50">
+      <div className="fix-side-flow left-6 top-6 bottom-6 flex flex-col gap-4 z-50">
 
         {/* NODE TOOLS */}
         <div className="bg-[#161b22] border border-[#30363d] p-2 rounded-2xl flex flex-col gap-2">

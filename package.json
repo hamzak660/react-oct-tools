@@ -15,8 +15,10 @@
     "@wavesurfer/react": "^1.0.12",
     "axios": "^1.15.0",
     "lucide-react": "^1.7.0",
+    "pdfjs-dist": "^3.11.174",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
+    "react-rnd": "^10.5.3",
     "wavesurfer.js": "^7.12.6"
   },
   "devDependencies": {
