@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
-
+const API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 // ✅ FIX: stable worker (Vite-safe)
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -75,7 +75,7 @@ export default function AiSummarizer() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${process.env.REACT_APP_GROQ_API_KEY}`,
+            Authorization: `Bearer ${API_KEY}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
