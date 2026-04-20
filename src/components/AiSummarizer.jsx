@@ -11,7 +11,7 @@ export default function AiSummarizer() {
   const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+console.log(import.meta.env.VITE_GROQ_API_KEY);
   // 📄 Extract PDF text
   const extractText = async (file) => {
     try {
