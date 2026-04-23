@@ -782,11 +782,7 @@ export default function Canvas() {
 
         {/* TOP BAR */}
         <div className="cv-topbar">
-          <div className="cv-logo">
-            <div className="cv-logo-mark" />
-            Canvas
-          </div>
-          <div className="cv-sep" />
+         
 
           <button className="cv-tbtn" onClick={() => fileInputRef.current?.click()}>
             <ImagePlus size={12} /> Import

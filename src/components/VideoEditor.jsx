@@ -1044,8 +1044,7 @@ export default function VideoEditor() {
 
       {/* TOPBAR */}
       <div style={S.topbar}>
-        <span style={S.logo}>FLUX<span style={{ color: "#3879d9" }}>.</span>EDIT</span>
-        <div style={S.div} />
+
         <label style={S.tbBtn}>
           <Icons.Upload /><span>Import</span>
           <input type="file" multiple accept="video/*,audio/*" style={{ display: "none" }} onChange={onFileInput} />

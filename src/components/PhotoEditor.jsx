@@ -363,7 +363,6 @@ export default function PhotoEditor() {
 
       {/* ── Top bar ── */}
       <div style={{height:36,background:"#111115",borderBottom:"1px solid #2a2a35",display:"flex",alignItems:"center",padding:"0 12px",gap:2,flexShrink:0}}>
-        <span style={{fontSize:11,fontWeight:700,color:"#e8704a",letterSpacing:".1em",marginRight:12}}>PHOTON</span>
         {["File","Edit","Image","Filters"].map(l=>(
           <button key={l} style={{padding:"4px 10px",borderRadius:3,fontSize:11,color:l==="File"?"#e8704a":"#8891a0",border:`1px solid ${l==="File"?"#50301a":"transparent"}`,background:l==="File"?"#1e1410":"none",cursor:"pointer"}}>{l}</button>
         ))}

@@ -728,7 +728,7 @@ export default function AudioEditor() {
 
         {/* Top bar */}
         <div style={{ height: 36, background: "#111115", borderBottom: "1px solid #2a2a35", display: "flex", alignItems: "center", padding: "0 12px", gap: 2, flexShrink: 0 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, color: "#4d9ef7", letterSpacing: ".08em", marginRight: 12 }}>WAVEFORM</span>
+
           {["File","Edit","Effects"].map(l => (
             <button key={l} style={{ padding: "4px 10px", borderRadius: 3, fontSize: 11, color: l === "File" ? "#4d9ef7" : "#8891a0", border: "1px solid " + (l === "File" ? "#2a3550" : "transparent"), background: l === "File" ? "#1e1e28" : "none", cursor: "pointer" }}>{l}</button>
           ))}
