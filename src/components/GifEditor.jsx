@@ -852,11 +852,7 @@ export default function GifEditor() {
       >
         {/* ── TOP BAR ── */}
         <div className="ge-topbar">
-          <div className="ge-logo">
-            <div className="ge-logo-dot" />
-            GIF Studio
-          </div>
-          <div className="ge-sep" />
+       
 
           <button className="ge-tbtn ghost" onClick={() => applyTimeline("reverse")}>
             Reverse

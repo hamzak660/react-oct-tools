@@ -1,60 +1,87 @@
 import { useState, useRef, useEffect } from "react";
-import { Paperclip, ArrowUp, Sparkles } from "lucide-react";
+import { Paperclip, ArrowUp, Sparkles, Loader } from "lucide-react";
 //import BackButton from "./BackButton";
+
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "llama-3.1-8b-instant";
 
 export default function AI({ setActiveTool }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const chatRef = useRef(null);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-
-    const newMessages = [...messages, { role: "user", text: input }];
-    setMessages(newMessages);
-    setInput("");
-
-    setTimeout(() => {
-      setMessages(prev => [
-        ...prev,
-        {
-          role: "assistant",
-          text:
-            "I'm processing your request. How else can I assist you with the AI Canvas Suite?",
-        },
-      ]);
-    }, 1000);
-  };
-
+  // ─── Auto-scroll on new messages ────────────────────────────────────────────
   useEffect(() => {
     if (chatRef.current) {
-      chatRef.current.scrollTo({
-        top: chatRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+      chatRef.current.scrollTo({ top: chatRef.current.scrollHeight, behavior: "smooth" });
     }
-  }, [messages]);
+  }, [messages, loading]);
+
+  // ─── Call Groq API ───────────────────────────────────────────────────────────
+  async function callGroq(history) {
+    const res = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: history.map((m) => ({ role: m.role, content: m.text })),
+      }),
+    });
+
+    const raw = await res.text();
+    if (!res.ok) throw new Error(raw);
+
+    const data = JSON.parse(raw);
+    return data?.choices?.[0]?.message?.content || "No response received.";
+  }
+
+  // ─── Handle Send ─────────────────────────────────────────────────────────────
+  async function handleSend() {
+    if (!input.trim() || loading) return;
+
+    const userMsg = { role: "user", text: input.trim() };
+    const updatedHistory = [...messages, userMsg];
+
+    setMessages(updatedHistory);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const reply = await callGroq(updatedHistory);
+      setMessages((prev) => [...prev, { role: "assistant", text: reply }]);
+    } catch (err) {
+      console.error("Groq error:", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: `⚠️ Error: ${err.message}` },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden ">
+    <div className="h-full flex flex-col overflow-hidden">
 
-      {/* Back Button 
+      {/* Back Button
       <BackButton setActiveTool={setActiveTool} />
-*/}
+      */}
+
       {/* Chat Area */}
-      <main
-        ref={chatRef}
-        className="flex-1 overflow-y-auto px-4 pt-8 pb-32"
-      >
+      <main ref={chatRef} className="flex-1 overflow-y-auto px-4 pt-8 pb-32">
         <div className="max-w-[800px] mx-auto space-y-8">
 
           {/* Welcome State */}
-          {messages.length === 0 && (
+          {messages.length === 0 && !loading && (
             <div className="flex flex-col items-center justify-center py-20 text-center space-y-6">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
-
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold text-white tracking-tight">
                   How can I help you today?
@@ -72,9 +99,7 @@ export default function AI({ setActiveTool }) {
               <div
                 key={i}
                 className={`flex gap-4 ${
-                  msg.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
+                  msg.role === "user" ? "justify-end" : "justify-start"
                 } animate-[slideUp_0.3s_ease-out]`}
               >
                 <div
@@ -84,11 +109,23 @@ export default function AI({ setActiveTool }) {
                       : "bg-[#161b22] border border-gray-800 text-gray-200"
                   } rounded-2xl px-4 py-3 shadow-sm`}
                 >
-                  <p className="leading-relaxed">{msg.text}</p>
+                  <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
                 </div>
               </div>
             ))}
+
+            {/* Typing Indicator */}
+            {loading && (
+              <div className="flex gap-4 justify-start animate-[slideUp_0.3s_ease-out]">
+                <div className="bg-[#161b22] border border-gray-800 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:0ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:150ms]" />
+                  <span className="w-2 h-2 rounded-full bg-gray-500 animate-bounce [animation-delay:300ms]" />
+                </div>
+              </div>
+            )}
           </div>
+
         </div>
       </main>
 
@@ -121,19 +158,23 @@ export default function AI({ setActiveTool }) {
               {/* Send */}
               <button
                 onClick={handleSend}
-                disabled={!input.trim()}
+                disabled={!input.trim() || loading}
                 className="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:bg-gray-700 disabled:shadow-none"
               >
-                <ArrowUp className="w-5 h-5" />
+                {loading
+                  ? <Loader className="w-5 h-5 animate-spin" />
+                  : <ArrowUp className="w-5 h-5" />
+                }
               </button>
+
             </div>
           </div>
-
           <p className="text-center text-[10px] text-gray-600 mt-3 uppercase tracking-widest font-medium">
             AI can make mistakes. Check important info.
           </p>
         </div>
       </footer>
+
     </div>
   );
 }
